@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[16]:
 
 
 import matplotlib.pyplot as plt
@@ -9,9 +9,10 @@ import pandas
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import plotly.io as pio
 
 
-# In[2]:
+# In[17]:
 
 
 colnames = [
@@ -20,14 +21,14 @@ colnames = [
 dat = pandas.read_csv('reservas bcra.csv', names=colnames, sep=';', thousands=".")
 
 
-# In[3]:
+# In[18]:
 
 
 #Elimno primera fila
 data = dat.drop(dat.index[0])
 
 
-# In[4]:
+# In[19]:
 
 
 día = []
@@ -38,13 +39,13 @@ while tot != 933:
 data.insert(2, "día", día)
 
 
-# In[5]:
+# In[20]:
 
 
 data["saldos"] = data["saldos"].str.replace(",","").astype(int)
 
 
-# In[7]:
+# In[21]:
 
 
 #Convirtiendo meses
@@ -63,43 +64,43 @@ data.loc[data['mes'] == 'noviembre', 'mes'] = 11
 data.loc[data['mes'] == 'diciembre', 'mes'] = 12
 
 
-# In[8]:
+# In[22]:
 
 
 df = data['día'].map(str) + '-' + data['mes'].map(str) + '-' + data['año'].map(str)
 
 
-# In[9]:
+# In[23]:
 
 
 df2 = pandas.concat([df, data], axis=1, sort=False)
 
 
-# In[10]:
+# In[24]:
 
 
 df2.head()
 
 
-# In[11]:
+# In[25]:
 
 
 pandas.to_datetime(df2[0])
 
 
-# In[12]:
+# In[26]:
 
 
 df2.rename(columns = {0:'fecha'}, inplace = True) 
 
 
-# In[13]:
+# In[27]:
 
 
 df2.tail()
 
 
-# In[14]:
+# In[28]:
 
 
 x=df2["fecha"]
@@ -113,6 +114,24 @@ fig.update_xaxes(
 )
 
 fig.show()
+
+
+# In[29]:
+
+
+pio.write_html(fig, file='figure.html', auto_open=True)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
