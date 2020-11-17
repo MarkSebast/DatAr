@@ -1,3 +1,3 @@
 ## DatAR
 
-{% include figure.html %}
+{% include reservas bcra.html %}
