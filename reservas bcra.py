@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[155]:
+# In[18]:
 
 
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ import numpy as np
 import plotly.io as pio
 
 
-# In[2]:
+# In[19]:
 
 
 colnames = [
@@ -21,14 +21,14 @@ colnames = [
 dat = pandas.read_csv('reservas bcra.csv', names=colnames, sep=';', thousands=".")
 
 
-# In[3]:
+# In[20]:
 
 
 #Elimno primera fila
 data = dat.drop(dat.index[0])
 
 
-# In[4]:
+# In[21]:
 
 
 día = []
@@ -39,13 +39,13 @@ while tot != 933:
 data.insert(2, "día", día)
 
 
-# In[5]:
+# In[22]:
 
 
 data["saldos"] = data["saldos"].str.replace(",","").astype(int)
 
 
-# In[6]:
+# In[23]:
 
 
 #Convirtiendo meses
@@ -64,50 +64,50 @@ data.loc[data['mes'] == 'noviembre', 'mes'] = 11
 data.loc[data['mes'] == 'diciembre', 'mes'] = 12
 
 
-# In[7]:
+# In[24]:
 
 
 df = data['día'].map(str) + '-' + data['mes'].map(str) + '-' + data['año'].map(str)
 
 
-# In[8]:
+# In[25]:
 
 
 df2 = pandas.concat([df, data], axis=1, sort=False)
 
 
-# In[9]:
+# In[26]:
 
 
 df2.head()
 
 
-# In[10]:
+# In[27]:
 
 
 pandas.to_datetime(df2[0])
 
 
-# In[11]:
+# In[28]:
 
 
 df2.rename(columns = {0:'date'}, inplace = True) 
 
 
-# In[14]:
+# In[29]:
 
 
 df2['date'] = pandas.to_datetime(df2['date'])
 df2.date.dt.strftime('%Y%-m%-d')
 
 
-# In[15]:
+# In[30]:
 
 
 df2.tail()
 
 
-# In[150]:
+# In[39]:
 
 
 fig = go.Figure()
@@ -128,26 +128,48 @@ fig.add_trace(
 
 #Título
 fig.update_layout(
-    title_text="Reservas brutas BCRA por mes"
+    title_text="Reservas brutas BCRA por mes, en millones de USD"
 )
 
 
 
 #RangeSlider and selector
 fig.update_xaxes(
-    rangeselector=dict(
-        buttons=list([
-            dict(count=6, label="6m", step="month", stepmode="todate"),
-            dict(count=1, label="1y", step="year", stepmode="todate"),
-            dict(count=10, label="10y", step="year", stepmode="todate"),
-        ])),
-    
     rangeslider=dict(visible=True,
                     range=["1940-01-28", "2020-08-28"])
 )
 
 fig.update_xaxes(range=["1940-01-28", "2020-08-28"])
-     
+
+
+updatemenus = [
+    dict(
+        type="buttons",
+        direction="left",
+        x=1,
+        y=1.13,
+        buttons=list([
+            dict(
+                args=[{"yaxis.type": "linear"}],
+                label="Escala lineal",
+                method="relayout"
+            ),
+            dict(
+                args=[{"yaxis.type": "log"}],
+                label="Escala logarítmica",
+                method="relayout"
+                
+            )
+        ]),
+        bgcolor='gray',
+        bordercolor='green',
+        borderwidth= 3,
+        font=dict(color='black')
+        
+    )
+]  
+                
+    
 
 #Color range selector
 fig.update_xaxes(rangeselector_bgcolor='gray')
@@ -155,18 +177,19 @@ fig.update_xaxes(rangeselector_bgcolor='gray')
 
 #Color de fondo
 fig.update_layout(
+    updatemenus=updatemenus,
     dragmode="pan",
     hovermode="x",
     legend=dict(traceorder="reversed"),
     height=700,
     template="plotly_dark",
+    separators=",.",
     margin=dict(
         t=100,
         b=100
     )
 )
 
-    
 #
 
 
@@ -175,8 +198,14 @@ fig.show()
 #When using "all" button, range changes to dates out of the df. Can't find a solution to that
 
 
-# In[156]:
+# In[40]:
 
 
 pio.write_html(fig, file='reservas bcra.html', auto_open=True)
+
+
+# In[ ]:
+
+
+
 
